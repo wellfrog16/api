@@ -1,7 +1,15 @@
 const express = require('express');
+const hello = require('../helper/databse');
 const router = express.Router();
 
-router.get('/list', (req, res) => {  
+hello();
+
+
+// let shop = db.load('imooc-shop');
+
+// shop.goods.findOne()
+
+router.get('/list', (req, res) => {
     res.send({ content: 'list' });  
 });
 
