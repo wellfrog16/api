@@ -1,3 +1,1 @@
-{"id":1,"database":"test","_id":"Gs5l4kAGLLos9HnG"}
-{"id":2,"database":"jack","_id":"eaVmhDWqDrPENcYj"}
-{"id":1,"database":"222","_id":"Gs5l4kAGLLos9HnG"}
+{"id":1,"database":"imooc-shop","collection":[{"name":"goods","path":"../db/imooc-shop/goods.db"},{"name":"user","path":"../db/imooc-shop/user.db"}],"_id":"z12hb7ny4OfLaPd0"}
