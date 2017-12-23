@@ -11,12 +11,12 @@ function readDir(dir) {
         if (stat && stat.isDirectory()) {  
             files = files.concat(readDir(filepath));
         }  
-        else {  
+        else {
             files.push({
                 fullname:filename,
                 name: filename.split('.').slice(0, 1)[0],
                 suffix: filename.split('.').slice(1)[0],
-                folder: dir.split('\\').reverse().slice(0,1)[0],
+                folder: dir.replace(/\\/g, '/').split('/').reverse().slice(0,1)[0],
                 path: path.join(dir, filename)
             });
         }  
