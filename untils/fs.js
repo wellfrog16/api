@@ -9,7 +9,7 @@ function readDir(dir) {
         const stat = fs.statSync(filepath);
 
         if (stat && stat.isDirectory()) {  
-            children = children.concat(readDir(filepath));
+            files = files.concat(readDir(filepath));
         }  
         else {  
             files.push({
