@@ -1,9 +1,9 @@
-const database = require('../helper/databse');
+const database = require('../helper/database');
 const handleSend = require('../helper/handleSend');
 
 let db = null;
 
-database.load('imooc-shop').then((value)=> (db = value));
+database.load('imooc-shop').then((value)=> (db = value)).catch((err)=>{ console.log(err); });
 
 let model = {
     goods : {

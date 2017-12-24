@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require('path');
+const moment = require('moment');
 
 function readDir(dir) {
     var files = []
@@ -17,12 +18,28 @@ function readDir(dir) {
                 name: filename.split('.').slice(0, 1)[0],
                 suffix: filename.split('.').slice(1)[0],
                 folder: dir.replace(/\\/g, '/').split('/').reverse().slice(0,1)[0],
-                path: path.join(dir, filename)
+                bytes: stat.size,
+                size: bytesToSize(stat.size),
+                path: path.normalize(path.join(dir, filename)),
+                mtime: moment(stat.mtime).format('YYYY-MM-DD HH:mm:ss'),
+                ctime: moment(stat.ctime).format('YYYY-MM-DD HH:mm:ss')
             });
         }  
     });
   
     return files;
 }
+
+function bytesToSize(bytes) {  
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];  
+
+    let i = Math.floor(Math.log(bytes) / Math.log(k));  
+
+    // return (bytes / Math.pow(k, i)) + ' ' + sizes[i];   
+    // toPrecision(3) 后面保留一位小数，如1.0GB
+    return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];  
+}  
 
 module.exports = { readDir };

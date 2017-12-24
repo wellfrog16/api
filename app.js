@@ -18,7 +18,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 // 加载路由
-app.use('/imooc-shop', require('./routers/imooc-shop'));
+app.use('/testa', require('./routers/testa'));
+app.use('/testb', require('./routers/testb'));
+app.use('/database', require('./routers/database'));
+// app.use('/imooc-shop', require('./routers/imooc-shop'));
+
 
 
 // 定义错误页
