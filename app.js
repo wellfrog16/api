@@ -22,6 +22,7 @@ app.use(bodyParser.json());
 
 // 加载路由
 app.use('/database', require('./routers/database'));
+app.use('/config', require('./routers/config'));
 // app.use('/imooc-shop', require('./routers/imooc-shop'));
 
 // 定义错误页
