@@ -1,6 +1,6 @@
 const path = require('path');
 const Datastore = require('nedb');
-const { readDir } = require('../untils/fs');
+const { readDir } = require('../utils/fs');
 
 const files = readDir(path.join(__dirname, '../db'));
 
