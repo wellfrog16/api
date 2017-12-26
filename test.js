@@ -1,7 +1,5 @@
-require('./utils/prototype');
-const path = require('path');
-const { readDir } = require('./utils/fs');
+const xx = require('./models/sys/database');
 
-var aaa = readDir(path.join(__dirname, '../db'));
-
-console.log(aaa.page(2, 2));
+xx.guid.getGuid('dictionary', 'config').then((v) => {
+    console.log(v);
+});;

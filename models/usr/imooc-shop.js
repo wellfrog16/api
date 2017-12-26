@@ -1,5 +1,5 @@
-const database = require('../helper/database');
-const handleSend = require('../helper/handleSend');
+const database = require('../../helper/database');
+const handleSend = require('../../helper/handleSend');
 
 let db = null;
 

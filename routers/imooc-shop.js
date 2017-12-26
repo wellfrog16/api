@@ -1,5 +1,5 @@
 const express = require('express');
-const model = require('../models/imooc-shop');
+const model = require('../models/usr/imooc-shop');
 const router = express.Router();
 
 

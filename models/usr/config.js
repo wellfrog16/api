@@ -1,13 +1,13 @@
 const moment = require('moment');
-const handleSend = require('../helper/handleSend');
-const database = require('../helper/database');
+const handleSend = require('../../helper/handleSend');
+const database = require('../../helper/database');
 
 // 外部测试
 // 这么写导致应用一起动就会加载所有的数据库
 // 不知道对资源影响大不大
 // 如果影响很大，需要把这个调用写到每个的操作里面：insert, list...
 // 目前先测试
-const db = database('config', 'sys');
+const db = database('config', 'usr');
 
 let model = {
     dictionary : {
