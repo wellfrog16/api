@@ -20,7 +20,7 @@ function readDir(dir) {
                     fullname:filename,
                     name: filename.split('.').slice(0, 1)[0],
                     suffix: filename.split('.').slice(1)[0],
-                    folder: dir.replace(/\\/g, '/').split('/').reverse().slice(0,1)[0],
+                    folder: dir.replace(/\\/g, '/').split('/').reverse().slice(0, 1)[0],
                     bytes: stat.size,
                     size: bytesToSize(stat.size),
                     path: path.normalize(path.join(dir, filename)),

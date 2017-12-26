@@ -7,13 +7,13 @@ database.load('imooc-shop').then((value)=> (db = value)).catch((err)=>{ console.
 
 let model = {
     goods : {
-        detail(req, res, next) {
+        detail(req, res) {
             db.goods.findOne({id: +req.params.id}, (err, docs)=> handleSend(res, err, docs));
         },
-        list(req, res, next) {
+        list(req, res) {
             db.goods.find({}).sort({id: 1}).exec((err, docs)=> handleSend(res, err, docs));
         }
     }
-}
+};
 
 module.exports = model;
