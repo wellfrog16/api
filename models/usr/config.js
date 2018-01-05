@@ -1,6 +1,7 @@
 const moment = require('moment');
 const handleSend = require('../../helper/handleSend');
 const database = require('../../helper/database');
+const dbModel = require('../../models/sys/database');
 
 // 外部测试
 // 这么写导致应用一起动就会加载所有的数据库
@@ -11,8 +12,9 @@ const db = database('config', 'usr');
 
 let model = {
     dictionary : {
-        insert(req, res) {
-            let data = Object.assign({}, req.body, {
+        async insert(req, res) {
+            const id = await dbModel.guid.getGuid('dictionary', 'config');
+            let data = Object.assign({id}, req.body, {
                 createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
                 updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
             });

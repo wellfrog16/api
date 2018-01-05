@@ -10,23 +10,37 @@ let model = {
             return new Promise((resolve, reject) => {
                 db.guid.findOne({collection, database, root}, (err, docs) => {
                     if (docs) { // 已有
-                        resolve(99);
+                        this.update(collection, database, root).then(v => resolve(v)).catch(err => reject(err));
                     }
                     else {
-                        this.insert(collection, database, root).then((v) => resolve(v));
+                        this.insert(collection, database, root).then(v => resolve(v)).catch(err => reject(err));
                     }
                 });
             });
         },
         insert(collection, database, root='usr'){
             return new Promise((resolve, reject) => {
-                db.guid.insert({collection, database, root, id: 1}, (err, docs) => {
-                    resolve(1);
+                db.guid.insert({collection, database, root, id: 1}, (err) => {
+                    if (!err) {
+                        resolve(1);
+                    }
+                    else {
+                        reject(err);
+                    }                    
                 });
             });
         },
-        update(){
-
+        update(collection, database, root='usr'){
+            return new Promise((resolve, reject) => {
+                db.guid.update({collection, database, root}, { $inc: { id: 1 } }, {returnUpdatedDocs: true}, (err, numAffected, docs) => {
+                    if (!err) {
+                        resolve(docs.id);
+                    }
+                    else {
+                        reject(err);
+                    }
+                });
+            });
         }
     }
 };

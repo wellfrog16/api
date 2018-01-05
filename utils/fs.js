@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
 
+// 读取指定路径下的所有文件
 function readDir(dir) {
     var files = [];
 

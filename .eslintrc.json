@@ -8,6 +8,7 @@
     },
     "extends": "eslint:recommended",
     "parserOptions": {
+        "ecmaVersion": 7,
         "sourceType": "module",
         "allowImportExportEverywhere": true
     },
@@ -20,7 +21,8 @@
         "semi": [2, "always"],
         "no-extra-semi": 2,
         "space-before-function-paren": [2, "never"],
-        "no-path-concat": [0]
+        "no-path-concat": [0],
+        "require-await": [2]
     },
     "globals": {
         "__dirname": false
