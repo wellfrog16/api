@@ -12,6 +12,9 @@ const db = database('config', 'usr');
 
 let model = {
     dictionary : {
+        detail(req, res) {
+            db.dictionary.findOne({id: +req.params.id}, (err, docs)=> handleSend(res, err, docs));
+        },
         async insert(req, res) {
             const id = await dbModel.guid.getGuid('dictionary', 'config');
             let data = Object.assign({id}, req.body, {
