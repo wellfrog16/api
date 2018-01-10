@@ -11,17 +11,17 @@ const dbModel = require('../../models/sys/database');
 const db = database('config', 'usr');
 
 let model = {
-    dictionary : {
+    dictionary: {
         list(req, res) {
             const { page = 1, pagesize = 20 } = req.query;
-            db.dictionary.find({}).sort({ id: -1}).skip((page - 1) * pagesize).limit(pagesize).exec((err1, list)=> {
+            db.dictionary.find({}).sort({id: -1}).skip((page - 1) * pagesize).limit(pagesize).exec((err1, list) => {
                 db.dictionary.count({}, (err2, total) => {
                     handleSend(res, (err1 + err2), {total, list});
-                });                
+                });
             });
         },
         detail(req, res) {
-            db.dictionary.findOne({id: +req.params.id}, (err, docs)=> handleSend(res, err, docs));
+            db.dictionary.findOne({id: +req.params.id}, (err, docs) => handleSend(res, err, docs));
         },
         async insert(req, res) {
             const id = await dbModel.guid.getGuid('dictionary', 'config');
@@ -29,16 +29,19 @@ let model = {
                 createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
                 updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
             });
-            db.dictionary.insert(data, (err, docs)=> handleSend(res, err, docs));
+            db.dictionary.insert(data, (err, docs) => handleSend(res, err, docs));
         },
         update(req, res) {
             let data = Object.assign({}, req.body, {
                 updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
             });
-            db.dictionary.update({id: +req.params.id}, { $set: data}, {returnUpdatedDocs: true}, (err, numAffected, docs)=> handleSend(res, err, docs));
+            db.dictionary.update({id: +req.params.id}, {$set: data}, {returnUpdatedDocs: true}, (err, numAffected, docs) => handleSend(res, err, docs));
         },
         delete(req, res) {
-            db.dictionary.remove({id: +req.params.id}, {}, (err, numAffected)=> handleSend(res, err, numAffected));
+            db.dictionary.remove({id: +req.params.id}, {}, (err, numAffected) => handleSend(res, err, numAffected));
+        },
+        checkName(req, res) {
+            db.dictionary.findOne({name: req.params.name}, {id: 1, _id: 0}, (err, docs) => handleSend(res, err, docs));
         }
     }
 };

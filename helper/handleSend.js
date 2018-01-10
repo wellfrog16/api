@@ -5,8 +5,7 @@ function handleSend(res, err, docs) {
             msg: '数据库出错了~',
             data: err
         });
-    }
-    else {
+    } else {
         res.json({
             code: 200,
             msg: '',
@@ -14,6 +13,5 @@ function handleSend(res, err, docs) {
         });
     }
 }
-
 
 module.exports = handleSend;

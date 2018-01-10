@@ -1,19 +1,15 @@
 {
     "env": {
-        "browser": true,
-        "commonjs": true,
-        "es6": true,
-        "jquery": true,
-        "amd": true
+        "browser": true
     },
-    "extends": "eslint:recommended",
+    "extends": "standard",
     "parserOptions": {
-        "ecmaVersion": 7,
+        "ecmaVersion": 8,
         "sourceType": "module",
         "allowImportExportEverywhere": true
     },
     "rules": {
-        "no-console": "off",
+        "no-console": [0],
         "comma-spacing": [2, {"before": false, "after": true}],
         "indent": [2, 4],
         "linebreak-style": [2, "windows"],
@@ -22,7 +18,9 @@
         "no-extra-semi": 2,
         "space-before-function-paren": [2, "never"],
         "no-path-concat": [0],
-        "require-await": [2]
+        "require-await": [2],
+        "eol-last": [0],
+        "no-extend-native": [0]
     },
     "globals": {
         "__dirname": false

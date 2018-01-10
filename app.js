@@ -1,6 +1,6 @@
-const express = require('express'),
-    bodyParser = require('body-parser'),
-    app = express();
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
 
 //
 require('./utils/prototype');
@@ -16,7 +16,7 @@ app.all('*', (req, res, next) => {
     next();
 });
 
-// 
+//
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
@@ -29,15 +29,15 @@ app.use('/config', require('./routers/config'));
 app.use((req, res) => {
     res.status(404).json({'code': 404, 'msg': '页面无法找到'});
 });
-  
+
 app.use((req, res) => {
     res.status(500).json({'code': 500, 'msg': '服务器错误'});
 });
 
 // 打开服务，监听端口
-var server = app.listen(8001, () => {
-    var host = server.address().address;
-    var port = server.address().port;
+app.listen(8001, () => {
+    // var host = server.address().address;
+    // var port = server.address().port;
 
-    console.log('App listening at http://%s:%s', host, port);
+    console.log('App listening at http://127.0.0.1:8001');
 });
