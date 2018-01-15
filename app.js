@@ -12,7 +12,7 @@ app.all('*', (req, res, next) => {
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
     res.header('X-Powered-By', 'stand by me, by wellfrog.');
-    res.header('Content-Type', 'application/json;charset=utf-8');
+    // res.header('Content-Type', 'application/json;charset=utf-8');
     next();
 });
 
@@ -41,4 +41,5 @@ app.listen(8001, () => {
     // var port = server.address().port;
 
     console.log('App listening at http://127.0.0.1:8001');
+    console.log(`当前环境为：${process.env.NODE_ENV === 'production' ? '产品' : '测试'}环境`);
 });

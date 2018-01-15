@@ -1,7 +1,8 @@
 const express = require('express');
-// const model = require('../models/usr/database');
+const model = require('../models/sys/service');
 const router = express.Router();
+const upload = require('../helper/upload/image');
 
-// router.get('/upload', (req, res, next) => model.database.list(req, res, next));
+router.post('/file/upload', upload.single('avatar'), (req, res, next) => model.file.upload(req, res, next));
 
 module.exports = router;

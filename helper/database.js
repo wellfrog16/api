@@ -1,8 +1,9 @@
-const path = require('path');
 const Datastore = require('nedb');
 const { readDir } = require('../utils/fs');
+const config = require('./config');
 
-const files = readDir(path.join(__dirname, '../../db'));
+// 读取数据库
+const files = readDir(config.dbPath);
 
 // 一次性载入所有数据库
 // for (const item of files) {

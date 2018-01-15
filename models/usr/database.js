@@ -1,8 +1,8 @@
-const path = require('path');
 const handleSend = require('../../helper/handleSend');
 const { readDir } = require('../../utils/fs');
+const config = require('../../helper/config');
 
-const files = readDir(path.join(__dirname, '../../../db'));
+const files = readDir(config.dbPath);
 
 // database.load('database').then((value)=> (db = value)).catch((err)=>{ console.log(err); });
 
