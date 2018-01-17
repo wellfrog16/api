@@ -2,7 +2,7 @@ function handleSend(res, err, docs) {
     if (err) {
         res.json({
             code: 500,
-            msg: '数据库出错了~',
+            msg: '出错了~',
             data: err
         });
     } else {
