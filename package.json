@@ -9,7 +9,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "set NODE_ENV=&&node app.js",
-    "prod": "set NODE_ENV=production&&node app.js",
+    "prod": "export NODE_ENV=production&&node app.js",
     "lint": "eslint helper/**/*.js models/**/*.js router/**/*.js utils/**/*.js *.js --fix"
   },
   "author": "",
