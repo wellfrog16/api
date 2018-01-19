@@ -14,8 +14,13 @@ let model = {
     blog: {
         list(req, res) {
             const { page = 1, pagesize = 20 } = req.query;
-            db.dictionary.find({}).sort({id: -1}).skip((page - 1) * pagesize).limit(pagesize).exec((err1, list) => {
-                db.dictionary.count({}, (err2, total) => {
+            db.blog.find({}, { id: 1, type: 1, title: 1, release: 1, private: 1, createdAt: 1, _id: 0 }).sort({id: -1}).skip((page - 1) * pagesize).limit(pagesize).exec((err1, list) => {
+                // 格式化数据
+                list.forEach((value, index) => {
+                    list[index].date = moment(value.createdAt).format('YYYY-MM-DD');
+                });
+
+                db.blog.count({}, (err2, total) => {
                     handleSend(res, (err1 + err2), {total, list});
                 });
             });
@@ -24,12 +29,12 @@ let model = {
             db.dictionary.findOne({id: +req.params.id}, (err, docs) => handleSend(res, err, docs));
         },
         async insert(req, res) {
-            const id = await dbModel.guid.getGuid('dictionary', 'config');
+            const id = await dbModel.guid.getGuid('blog', 'dreamersky');
             let data = Object.assign({id}, req.body, {
                 createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
                 updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
             });
-            db.dictionary.insert(data, (err, docs) => handleSend(res, err, docs));
+            db.blog.insert(data, (err, docs) => handleSend(res, err, docs));
         },
         update(req, res) {
             let data = Object.assign({}, req.body, {
@@ -40,8 +45,23 @@ let model = {
         delete(req, res) {
             db.dictionary.remove({id: +req.params.id}, {}, (err, numAffected) => handleSend(res, err, numAffected));
         },
-        checkName(req, res) {
-            db.dictionary.findOne({name: req.params.name}, {id: 1, _id: 0}, (err, docs) => handleSend(res, err, docs));
+        changeRelease(req, res) {
+            db.blog.findOne({id: +req.params.id}, {id: 1, release: 1, _id: 0}, (err, docs) => {
+                if (err) {
+                    handleSend(res, err, docs);
+                }
+                docs.release = !docs.release;
+                db.blog.update({id: +req.params.id}, {$set: {release: docs.release}}, (err, numAffected) => handleSend(res, err, docs));
+            });
+        },
+        changePrivate(req, res) {
+            db.blog.findOne({id: +req.params.id}, {id: 1, private: 1, _id: 0}, (err, docs) => {
+                if (err) {
+                    handleSend(res, err, docs);
+                }
+                docs.private = !docs.private;
+                db.blog.update({id: +req.params.id}, {$set: {private: docs.private}}, (err, numAffected) => handleSend(res, err, docs));
+            });
         }
     }
 };

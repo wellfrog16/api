@@ -1,6 +1,6 @@
 const Datastore = require('nedb');
 const { readDir } = require('../utils/fs');
-const config = require('./config');
+const config = require('../config/');
 
 // 读取数据库
 const files = readDir(config.dbPath);

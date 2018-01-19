@@ -1,6 +1,6 @@
 const handleSend = require('../../helper/handleSend');
 const { readDir } = require('../../utils/fs');
-const config = require('../../helper/config');
+const config = require('../../config/');
 
 const files = readDir(config.dbPath);
 

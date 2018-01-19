@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const moment = require('moment');
 // const md5 = require('md5');
-const config = require('../config');
+const config = require('../../config/');
 
 var storage = multer.diskStorage({
     // 设置上传文件路径,以后可以扩展成上传至七牛,文件服务器等等
