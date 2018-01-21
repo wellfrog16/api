@@ -14,7 +14,7 @@ let model = {
     blog: {
         list(req, res) {
             const { page = 1, pagesize = 20 } = req.query;
-            db.blog.find({}, { id: 1, type: 1, title: 1, release: 1, private: 1, createdAt: 1, _id: 0 }).sort({id: -1}).skip((page - 1) * pagesize).limit(pagesize).exec((err1, list) => {
+            db.blog.find({}, { id: 1, type: 1, title: 1, publish: 1, private: 1, createdAt: 1, _id: 0 }).sort({id: -1}).skip((page - 1) * pagesize).limit(pagesize).exec((err1, list) => {
                 // 格式化数据
                 list.forEach((value, index) => {
                     list[index].date = moment(value.createdAt).format('YYYY-MM-DD');
@@ -45,13 +45,13 @@ let model = {
         delete(req, res) {
             db.dictionary.remove({id: +req.params.id}, {}, (err, numAffected) => handleSend(res, err, numAffected));
         },
-        changeRelease(req, res) {
-            db.blog.findOne({id: +req.params.id}, {id: 1, release: 1, _id: 0}, (err, docs) => {
+        changePublish(req, res) {
+            db.blog.findOne({id: +req.params.id}, {id: 1, publish: 1, _id: 0}, (err, docs) => {
                 if (err) {
                     handleSend(res, err, docs);
                 }
-                docs.release = !docs.release;
-                db.blog.update({id: +req.params.id}, {$set: {release: docs.release}}, (err, numAffected) => handleSend(res, err, docs));
+                docs.publish = !docs.publish;
+                db.blog.update({id: +req.params.id}, {$set: {publish: docs.publish}}, (err, numAffected) => handleSend(res, err, docs));
             });
         },
         changePrivate(req, res) {
