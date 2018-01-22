@@ -45,15 +45,21 @@ let model = {
         delete(req, res) {
             db.dictionary.remove({id: +req.params.id}, {}, (err, numAffected) => handleSend(res, err, numAffected));
         },
+        // 发布仅执行一次，执行会更新创建和修改时间。也就是之前属于草稿状态
         changePublish(req, res) {
             db.blog.findOne({id: +req.params.id}, {id: 1, publish: 1, _id: 0}, (err, docs) => {
-                if (err) {
-                    handleSend(res, err, docs);
+                if (err && !docs.publish) {
+                    handleSend(res, err || docs, docs);
                 }
-                docs.publish = !docs.publish;
-                db.blog.update({id: +req.params.id}, {$set: {publish: docs.publish}}, (err, numAffected) => handleSend(res, err, docs));
+                const data = {
+                    publish: true,
+                    createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+                };
+                db.blog.update({id: +req.params.id}, {$set: data}, (err, numAffected) => handleSend(res, err, docs));
             });
         },
+        // 私有和公开可以反复切换
         changePrivate(req, res) {
             db.blog.findOne({id: +req.params.id}, {id: 1, private: 1, _id: 0}, (err, docs) => {
                 if (err) {
