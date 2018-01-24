@@ -43,7 +43,7 @@ let model = {
             db.dictionary.update({id: +req.params.id}, {$set: data}, {returnUpdatedDocs: true}, (err, numAffected, docs) => handleSend(res, err, docs));
         },
         delete(req, res) {
-            db.dictionary.remove({id: +req.params.id}, {}, (err, numAffected) => handleSend(res, err, numAffected));
+            db.blog.remove({id: +req.params.id}, {}, (err, numAffected) => handleSend(res, err, numAffected));
         },
         // 发布仅执行一次，执行会更新创建和修改时间。也就是之前属于草稿状态
         changePublish(req, res) {
