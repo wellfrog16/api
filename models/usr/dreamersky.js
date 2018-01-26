@@ -26,7 +26,7 @@ let model = {
             });
         },
         detail(req, res) {
-            db.dictionary.findOne({id: +req.params.id}, (err, docs) => handleSend(res, err, docs));
+            db.blog.findOne({id: +req.params.id}, (err, docs) => handleSend(res, err, docs));
         },
         async insert(req, res) {
             const id = await dbModel.guid.getGuid('blog', 'dreamersky');
@@ -40,7 +40,7 @@ let model = {
             let data = Object.assign({}, req.body, {
                 updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
             });
-            db.dictionary.update({id: +req.params.id}, {$set: data}, {returnUpdatedDocs: true}, (err, numAffected, docs) => handleSend(res, err, docs));
+            db.blog.update({id: +req.params.id}, {$set: data}, {returnUpdatedDocs: true}, (err, numAffected, docs) => handleSend(res, err, docs));
         },
         delete(req, res) {
             db.blog.remove({id: +req.params.id}, {}, (err, numAffected) => handleSend(res, err, numAffected));
