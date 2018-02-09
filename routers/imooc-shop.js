@@ -12,8 +12,9 @@ router.get('/edit', (req, res) => {
 });
 
 
-router.get('/goods/list', (req, res, next) => model.goods.list(req, res, next));
-router.get('/goods/detail/:id(\\d+)', (req, res, next) => model.goods.detail(req, res, next));
+router.get('/goods/fill', (req, res, next) => model.goods.insert(req, res, next));
+router.get('/goods', (req, res, next) => model.goods.list(req, res, next));
+router.get('/goods/:id(\\d+)', (req, res, next) => model.goods.detail(req, res, next));
 
 
 module.exports = router;
