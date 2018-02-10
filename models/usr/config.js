@@ -14,7 +14,7 @@ let model = {
     dictionary: {
         list(req, res) {
             const { page = 1, pagesize = 20 } = req.query;
-            db.dictionary.find({}).sort({id: -1}).skip((page - 1) * pagesize).limit(pagesize).exec((err1, list) => {
+            db.dictionary.find({}).sort({id: -1}).skip((page - 1) * pagesize).limit(+pagesize).exec((err1, list) => {
                 db.dictionary.count({}, (err2, total) => {
                     handleSend(res, (err1 + err2), {total, list});
                 });
