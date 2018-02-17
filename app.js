@@ -1,6 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser')
 const app = express();
+
+app.use(cookieParser('secret-wellfrog'));
 
 //
 require('./utils/prototype');
@@ -19,6 +22,51 @@ app.all('*', (req, res, next) => {
 //
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
+// 登陆拦截
+app.use((req, res, next) => {
+    const path = req.path;
+    const method = req.method.toLowerCase();
+
+    // console.log(req.path);
+    // console.log(req.method);
+    // console.log(req.originalUrl);
+
+    // imooc-shop项目拦截
+    if (/^\/imooc-shop\/.+/g.test(path)) {
+        // 已登陆，cookie登陆
+        if(req.signedCookies.user) {
+            next();
+        } else {
+            // 白名单，未登录可访问
+            const whiteList = [
+                {path: '/imooc-shop/user/login', method: 'post'},
+                {path: '/imooc-shop/user/checklogin', method: 'get'},
+                {path: '/imooc-shop/goods', method: 'get'}
+            ];
+
+            let pass = false;
+            for( const white of whiteList) {
+                if (white.path === path && (white.method === method || 'options' === method)) {
+                    pass = true;
+                    break;
+                }
+            }
+
+            if (pass) {
+                next();
+            } else {
+                // 白名单未next，返回没有权限
+                res.status(401).json({
+                    code: 401,
+                    data: '没有权限'
+                });
+            }
+        }
+    } else {
+        next();
+    }
+});
 
 // 加载路由
 app.use('/database', require('./routers/database'));

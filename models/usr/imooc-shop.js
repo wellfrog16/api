@@ -2,7 +2,7 @@ const database = require('../../helper/database');
 const handleSend = require('../../helper/handleSend');
 const {handlePromise} = require('../../helper/handle');
 const dbModel = require('../../models/sys/database');
-const utils = require('../../utils/utils');
+// const utils = require('../../utils/utils');
 
 const db = database('imooc-shop', 'usr');
 
@@ -96,8 +96,26 @@ model.user = {
     update(userDoc) {
         delete userDoc._id;
         return new Promise((resolve, reject) => {
-            db.user.update({id: +userDoc.id}, {$set: userDoc}, {returnUpdatedDocs: true}, (err, numAffected, doc) => handlePromise(resolve, reject, err, doc));
+            db.user.update({id: +userDoc.id}, {$set: userDoc}, {returnUpdatedDocs: true}, (err, numAffected, doc) => handlePromise(resolve, reject, err, numAffected));
         });
+    },
+    // 登入
+    login(name, password) {
+        return new Promise((resolve, reject) => {
+            db.user.findOne({name, password}, (err, doc) => {
+                const result = { };
+                if (doc) {
+                    result.id = doc.id;
+                    result.name = doc.name;
+                }
+                return handlePromise(resolve, reject, err, result);
+            });
+        });
+        // console.log(`name:${name}, password:${password}`);
+    },
+    // 登出
+    logout() {
+
     }
 };
 

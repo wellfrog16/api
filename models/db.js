@@ -1,4 +1,4 @@
-const database = require('../../helper/database');
+// const database = require('../../helper/database');
 const {handlePromise} = require('../../helper/handle');
 
 const model = (document, database, type = 'usr') => {
