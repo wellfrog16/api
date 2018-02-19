@@ -1,16 +1,8 @@
-const handleSend = (res, err, docs) => {
+const handleSend = (res, err, data) => {
     if (err) {
-        res.json({
-            code: 500,
-            msg: '出错了~',
-            data: err
-        });
+        res.json({ code: 500, err: err, data: {} });
     } else {
-        res.json({
-            code: 200,
-            msg: '',
-            data: docs
-        });
+        res.json({ code: 200, err: null, data });
     }
 };
 
@@ -22,7 +14,10 @@ const handlePromise = (resolve, reject, err, docs) => {
     }
 };
 
+const handleError = err => new Promise((resolve, reject) => handlePromise(resolve, reject, err, {}));
+
 module.exports = {
     handleSend,
-    handlePromise
+    handlePromise,
+    handleError
 };

@@ -18,14 +18,14 @@
 //     // console.log(v);
 // });
 
-var x = () => new Promise((resolve, reject) => {
-    const a = 1;
-    if (a > 2) {
-        resolve('正确');
-    } else {
-        reject(new Error('错误'));
-    }
-}).then(v => Promise.resolve('11111')).catch(v => Promise.reject('22222'));
+// var x = () => new Promise((resolve, reject) => {
+//     const a = 1;
+//     if (a > 2) {
+//         resolve('正确');
+//     } else {
+//         reject('错误');
+//     }
+// });
 
 // var y = () => new Promise((resolve, reject) => {
 //     x().then((v) => {
@@ -39,23 +39,52 @@ var x = () => new Promise((resolve, reject) => {
 //     });
 // });
 
-var y = async function() {
+// var y = async function() {
 
-    try {
-        const bb = await x();
-        console.log(bb);
-        return bb;
-    } catch (e) {
-        console.log(1122343);
-        console.log(e);
-        return e;
-    }
-};
+//     try {
+//         const bb = await x();
+//         console.log(bb);
+//         return bb;
+//     } catch (e) {
+//         console.log(1122343);
+//         console.log(e);
+//         return e;
+//     }
+// };
 
-async function qq() {
-    const aa = await y();
-    console.log('============+++++++++++');
-    console.log(aa);
+// async function qq() {
+//     const aa = await y();
+//     console.log('============+++++++++++');
+//     console.log(aa);
+// }
+
+// var z = async function() {
+//     const bb = await x();
+//     console.log(bb);
+// };
+
+// z();
+
+// async function qq() {
+//     try {
+//         const aa = await x();
+//     } catch(e) {
+//         console.log(e);
+//     }
+// }
+
+// qq();
+
+
+function aaa() {
+    // return new Promise((resolve, reject) => {
+    //     reject(1);
+    // });
+    Promise.reject(1);
 }
 
-qq();
+aaa().then((res) => {
+    console.log('1:' + res);
+}).catch((res) => {
+    console.log('2:' + res);
+})

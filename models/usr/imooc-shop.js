@@ -1,8 +1,6 @@
 const database = require('../../helper/database');
-const handleSend = require('../../helper/handleSend');
-const {handlePromise} = require('../../helper/handle');
+const utils = require('../../utils/utils');
 const dbModel = require('../../models/sys/database');
-// const utils = require('../../utils/utils');
 
 const db = database('imooc-shop', 'usr');
 
@@ -10,11 +8,15 @@ let model = {};
 
 // 商品
 model.goods = {
+
+    // 单品详细
     detail(id) {
         return new Promise((resolve, reject) => {
-            db.goods.findOne({id}, (err, doc) => handlePromise(resolve, reject, err, doc));
+            db.goods.findOne({id}, (err, doc) => utils.promise.test(resolve, reject, err, doc));
         });
     },
+
+    // 列表，带分页
     list(query) {
         const { page = 1, pagesize = 12, sortPrice = 0, start = 0, end = 0 } = query;
 
@@ -26,33 +28,60 @@ model.goods = {
 
         return new Promise((resolve, reject) => {
             db.goods.find(params).sort({price: sortPrice}).skip((page - 1) * pagesize).limit(+pagesize).exec((err1, list) => {
-                db.goods.count({params}, (err2, total) => handlePromise(resolve, reject, (err1 + err2), {total, list}));
+                db.goods.count({params}, (err2, total) => utils.promise.test(resolve, reject, (err1 + err2), {total, list}));
             });
         });
     },
-    async insert(req, res) {
-        const id = await dbModel.guid.getGuid('goods', 'immoc-shop');
-        let data = Object.assign({id}, {
-            name: '三星',
-            price: 799,
-            photo: 'https://dummyimage.com/300/F1F'
+
+    // 加入新货物
+    async insert(doc) {
+        let id = 0;
+
+        // 尝试获取
+        try {
+            id = await dbModel.guid.getGuid('goods', 'immoc-shop');
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        let data = Object.assign({id}, doc);
+        // let data = Object.assign({id}, {
+        //     name: '三星',
+        //     price: 799,
+        //     photo: 'https://dummyimage.com/300/F1F',
+        //     checked: true
+        // });
+
+        return new Promise((resolve, reject) => {
+            db.goods.insert(data, (err, doc) => utils.promise.test(resolve, reject, err, doc));
         });
-        db.goods.insert(data, (err, doc) => handleSend(res, err, doc));
     }
 };
 
 // 购物车
 model.cart = {
-    async add(id) { // 加入到user的shop下
-        const userDoc = await model.user.detail(1);
-        const goodsDoc = await model.goods.detail(id);
+
+    // 添加商品
+    async insert(userId, goodsId) { // 加入到user的shop下
+        let userDoc = null;
+        let goodsDoc = null;
+
+        // 尝试获取
+        try {
+            userDoc = await model.user.detail(userId);
+            goodsDoc = await model.goods.detail(goodsId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 获取正常
         goodsDoc.count = 1;
 
         let flagItem = false;
 
         // 如果已经有相同编号的产品，则数量加1
         for (const item of userDoc.shop.cart) {
-            if (item.id === id) {
+            if (item.id === goodsId) {
                 item.count++;
                 flagItem = true;
                 break;
@@ -64,6 +93,82 @@ model.cart = {
             userDoc.shop.cart.push(goodsDoc);
         }
 
+        // 更新依旧返回Promise
+        return model.user.update(userDoc);
+    },
+
+    // 商品列表
+    async list(userId) {
+        let userDoc = null;
+
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 获取数据成功后
+        let err = null;
+        let doc = {};
+        if (!userDoc) {
+            err = '用户信息读取错误';
+        } else {
+            doc = {list: userDoc.shop.cart};
+        }
+
+        return utils.promise.default(err, doc);
+    },
+
+    // 删除，todo: 直接数据库删除
+    async delete(userId, goodsId) {
+        let userDoc = null;
+
+        // 尝试获取
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        let err = null;
+        let effect = 0;
+
+        if (userDoc) {
+            for (const goods of userDoc.shop.cart) {
+                if (goods.id === goodsId) {
+                    userDoc.shop.cart.splice(userDoc.shop.cart.indexOf(goods), 1);
+                    break;
+                }
+            }
+
+            effect = await model.user.update(userDoc);
+        } else {
+            err = '用户信息读取错误';
+        }
+
+        return utils.promise.default(err, {effect});
+    },
+
+    // 更新信息
+    async update(userId, goodsDoc) {
+        let userDoc = null;
+
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 如果已经有相同编号的产品，则数量加1
+        for (const item of userDoc.shop.cart) {
+            if (item.id === +goodsDoc.id) {
+                item.count = +goodsDoc.count;
+                item.checked = +goodsDoc.checked;
+                break;
+            }
+        }
+
+        // 更新依旧返回Promise
         return model.user.update(userDoc);
     }
 };
@@ -72,12 +177,20 @@ model.cart = {
 model.user = {
     detail(id) {
         return new Promise((resolve, reject) => {
-            db['user'].findOne({id}, (err, doc) => handlePromise(resolve, reject, err, doc));
+            db['user'].findOne({id}, (err, doc) => utils.promise.test(resolve, reject, err, doc));
         });
     },
     // 临时添加固定用户
     async insert() {
-        const id = await dbModel.guid.getGuid('users', 'immoc-shop');
+        let id = 0;
+
+        // 尝试获取
+        try {
+            id = await dbModel.guid.getGuid('users', 'immoc-shop');
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
         let data = Object.assign({id}, {
             name: 'frog',
             password: '123456',
@@ -89,14 +202,14 @@ model.user = {
         });
 
         return new Promise((resolve, reject) => {
-            db.user.insert(data, (err, doc) => handlePromise(resolve, reject, err, doc));
+            db.user.insert(data, (err, doc) => utils.promise.test(resolve, reject, err, doc));
         });
     },
 
     update(userDoc) {
         delete userDoc._id;
         return new Promise((resolve, reject) => {
-            db.user.update({id: +userDoc.id}, {$set: userDoc}, {returnUpdatedDocs: true}, (err, numAffected, doc) => handlePromise(resolve, reject, err, numAffected));
+            db.user.update({id: +userDoc.id}, {$set: userDoc}, {returnUpdatedDocs: true}, (err, numAffected, doc) => utils.promise.test(resolve, reject, err, numAffected));
         });
     },
     // 登入
@@ -108,14 +221,10 @@ model.user = {
                     result.id = doc.id;
                     result.name = doc.name;
                 }
-                return handlePromise(resolve, reject, err, result);
+                return utils.promise.test(resolve, reject, err, result);
             });
         });
         // console.log(`name:${name}, password:${password}`);
-    },
-    // 登出
-    logout() {
-
     }
 };
 
