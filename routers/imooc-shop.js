@@ -54,11 +54,43 @@ router.delete('/cart/:id(\\d+)', (req, res, next) => {
     }
 });
 
+// 更新商品check状态
+router.put('/cart/checkAll', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.cart.checkAll(+user.id, req.body.checked).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
 // 用户
 // ------------------------------------------
 
 // user，简单cookie校验
 // router.get('/user/:id(\\d+)', (req, res) => model.user.detail(+req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+router.get('/user/:id(\\d+)', (req, res) => {
+    const user = req.signedCookies.user;
+
+    // 如果登陆存在，刷新时间
+    if (user && user.id === +req.params.id) {
+        res.cookie('user', user, {
+            path: '/',
+            maxAge: 1000 * 60 * 60,
+            signed: true
+        });
+
+        model.user.detail(+req.params.id).then(
+            doc => {
+                delete doc.password;
+                utils.handle.sendSuccess(res, doc);
+            },
+            err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登录');
+    }
+});
 
 // 登陆
 router.post('/user/login', (req, res) => model.user.login(req.body.name, req.body.password).then(doc => {

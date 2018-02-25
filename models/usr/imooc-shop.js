@@ -76,6 +76,7 @@ model.cart = {
 
         // 获取正常
         goodsDoc.count = 1;
+        goodsDoc.checked = true;
 
         let flagItem = false;
 
@@ -170,6 +171,25 @@ model.cart = {
 
         // 更新依旧返回Promise
         return model.user.update(userDoc);
+    },
+
+    // 全checked更新
+    async checkAll(userId, flagChecked) {
+        let userDoc = null;
+
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 如果已经有相同编号的产品，则数量加1
+        for (const item of userDoc.shop.cart) {
+            item.checked = flagChecked;
+        }
+
+        // 更新依旧返回Promise
+        return model.user.update(userDoc);
     }
 };
 
@@ -227,5 +247,8 @@ model.user = {
         // console.log(`name:${name}, password:${password}`);
     }
 };
+
+// 地址
+model.address = {};
 
 module.exports = model;
