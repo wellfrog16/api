@@ -14,7 +14,7 @@ let model = {
     blog: {
         list(req, res) {
             const { page = 1, pagesize = 20 } = req.query;
-            db.blog.find({}, { id: 1, type: 1, title: 1, publish: 1, private: 1, createdAt: 1, _id: 0 }).sort({id: -1}).skip((page - 1) * pagesize).limit(pagesize).exec((err1, list) => {
+            db.blog.find({}, { id: 1, type: 1, title: 1, publish: 1, private: 1, createdAt: 1, _id: 0 }).sort({id: -1}).skip((page - 1) * pagesize).limit(+pagesize).exec((err1, list) => {
                 // 格式化数据
                 list.forEach((value, index) => {
                     list[index].date = moment(value.createdAt).format('YYYY-MM-DD');

@@ -20,7 +20,8 @@
         "no-path-concat": [0],
         "require-await": [2],
         "eol-last": [0],
-        "no-extend-native": [0]
+        "no-extend-native": [0],
+        "prefer-promise-reject-errors": [0]
     },
     "globals": {
         "__dirname": false

@@ -1,6 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser')
+const interceptor = require('./helper/interceptor');
 const app = express();
+
+app.use(cookieParser('secret-wellfrog'));
 
 //
 require('./utils/prototype');
@@ -21,6 +25,9 @@ app.all('*', (req, res, next) => {
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+// 登陆拦截
+app.use((req, res, next) => interceptor(req, res, next));
+
 // 加载路由
 app.use('/database', require('./routers/database'));
 app.use('/config', require('./routers/config'));
@@ -30,11 +37,11 @@ app.use('/imooc-shop', require('./routers/imooc-shop'));
 
 // 定义错误页
 app.use((req, res) => {
-    res.status(404).json({'code': 404, 'msg': '页面无法找到'});
+    res.status(404).json({code: 404, err: '页面无法找到'});
 });
 
 app.use((req, res) => {
-    res.status(500).json({'code': 500, 'msg': '服务器错误'});
+    res.status(500).json({code: 500, err: '服务器错误'});
 });
 
 // 打开服务，监听端口
