@@ -6,6 +6,7 @@ const config = {
 const log = s => !config.debug || console.log(s);
 
 // 发送结果操作
+// 不使用http码，使用自定义的json来返回
 const handle = {
     sendSuccess(res, data) {
         res.json({ code: 200, err: null, data });
