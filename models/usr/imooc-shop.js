@@ -11,6 +11,9 @@ model.goods = {
 
     // 单品详细
     detail(id) {
+        // 数值化
+        id = +id;
+
         return new Promise((resolve, reject) => {
             db.goods.findOne({id}, (err, doc) => utils.promise.test(resolve, reject, err, doc));
         });
@@ -63,6 +66,10 @@ model.cart = {
 
     // 添加商品
     async insert(userId, goodsId) { // 加入到user的shop下
+        // 数值化
+        userId = +userId;
+        goodsId = +goodsId;
+
         let userDoc = null;
         let goodsDoc = null;
 
@@ -100,6 +107,9 @@ model.cart = {
 
     // 商品列表
     async list(userId) {
+        // 数值化
+        userId = +userId;
+
         let userDoc = null;
 
         try {
@@ -122,6 +132,10 @@ model.cart = {
 
     // 删除，todo: 直接数据库删除
     async delete(userId, goodsId) {
+        // 数值化
+        userId = +userId;
+        goodsId = +goodsId;
+
         let userDoc = null;
 
         // 尝试获取
@@ -152,6 +166,9 @@ model.cart = {
 
     // 更新信息
     async update(userId, goodsDoc) {
+        // 数值化
+        userId = +userId;
+
         let userDoc = null;
 
         try {
@@ -175,6 +192,9 @@ model.cart = {
 
     // 全checked更新
     async checkAll(userId, flagChecked) {
+        // 数值化
+        userId = +userId;
+
         let userDoc = null;
 
         try {
@@ -196,6 +216,9 @@ model.cart = {
 // 用户
 model.user = {
     detail(id) {
+        // 数值化
+        id = +id;
+
         return new Promise((resolve, reject) => {
             db['user'].findOne({id}, (err, doc) => utils.promise.test(resolve, reject, err, doc));
         });
@@ -249,6 +272,111 @@ model.user = {
 };
 
 // 地址
-model.address = {};
+model.address = {
+    // 添加商品
+    async insert(userId, addressDoc) { // 加入到user的address下
+        // 数值化
+        userId = +userId;
+
+        let userDoc = null;
+        let id = 0;
+
+        // 尝试获取
+        try {
+            id = await dbModel.guid.getGuid('address', 'immoc-shop');
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        addressDoc.id = id;
+        addressDoc.default = false;
+
+        userDoc.shop.address.push(addressDoc);
+        return model.user.update(userDoc);
+    },
+
+    // 地址列表
+    async list(userId) {
+        // 数值化
+        userId = +userId;
+
+        let userDoc = null;
+
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 获取数据成功后
+        let err = null;
+        let doc = {};
+        if (!userDoc) {
+            err = '用户信息读取错误';
+        } else {
+            doc = {list: userDoc.shop.address};
+        }
+
+        return utils.promise.default(err, doc);
+    },
+
+    // 删除，todo: 直接数据库删除
+    async delete(userId, addressId) {
+        // 数值化
+        userId = +userId;
+        addressId = +addressId;
+
+        let userDoc = null;
+
+        // 尝试获取
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        let err = null;
+        let effect = 0;
+
+        if (userDoc) {
+            for (const address of userDoc.shop.address) {
+                if (address.id === addressId) {
+                    userDoc.shop.address.splice(userDoc.shop.address.indexOf(address), 1);
+                    break;
+                }
+            }
+
+            effect = await model.user.update(userDoc);
+        } else {
+            err = '用户信息读取错误';
+        }
+
+        return utils.promise.default(err, {effect});
+    },
+
+    async default(userId, addressId) {
+        // 数值化
+        userId = +userId;
+        addressId = +addressId;
+
+        let userDoc = null;
+
+        // 尝试获取
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 遍历地址，更新default值
+        for (const item of userDoc.shop.address) {
+            item.default = item.id === addressId;
+        }
+
+        // 更新依旧返回Promise
+        return model.user.update(userDoc);
+    }
+};
 
 module.exports = model;

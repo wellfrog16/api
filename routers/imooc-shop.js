@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post('/goods', (req, res, next) => model.goods.insert(req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
 router.get('/goods', (req, res) => model.goods.list(req.query).then(docs => utils.handle.sendSuccess(res, docs), err => utils.handle.sendError(res, err)));
-router.get('/goods/:id(\\d+)', (req, res) => model.goods.detail(+req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
+router.get('/goods/:id(\\d+)', (req, res) => model.goods.detail(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
 
 // 购物车
 // ------------------------------------------
@@ -15,7 +15,7 @@ router.get('/cart', (req, res, next) => {
     const user = req.signedCookies.user;
 
     if (user) {
-        model.cart.list(+user.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+        model.cart.list(user.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
         utils.handle.sendError(res, '未登陆');
     }
@@ -26,7 +26,7 @@ router.post('/cart/:id(\\d+)', (req, res, next) => {
     const user = req.signedCookies.user;
 
     if (user) {
-        model.cart.insert(+user.id, +req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+        model.cart.insert(user.id, req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
         utils.handle.sendError(res, '未登陆');
     }
@@ -37,7 +37,7 @@ router.put('/cart', (req, res, next) => {
     const user = req.signedCookies.user;
 
     if (user) {
-        model.cart.update(+user.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+        model.cart.update(user.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
         utils.handle.sendError(res, '未登陆');
     }
@@ -48,7 +48,7 @@ router.delete('/cart/:id(\\d+)', (req, res, next) => {
     const user = req.signedCookies.user;
 
     if (user) {
-        model.cart.delete(+user.id, +req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+        model.cart.delete(user.id, req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
         utils.handle.sendError(res, '未登陆');
     }
@@ -59,7 +59,53 @@ router.put('/cart/checkAll', (req, res, next) => {
     const user = req.signedCookies.user;
 
     if (user) {
-        model.cart.checkAll(+user.id, req.body.checked).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+        model.cart.checkAll(user.id, req.body.checked).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 地址
+// ------------------------------------------
+// 请求列表
+router.get('/address', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.address.list(user.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 新建地址
+router.post('/address', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.address.insert(user.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 删除地址
+router.delete('/address/:id(\\d+)', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.address.delete(user.id, req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 设置默认地址
+router.put('/address/:id(\\d+)/default', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.address.default(user.id, req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
         utils.handle.sendError(res, '未登陆');
     }
@@ -81,7 +127,7 @@ router.get('/user/:id(\\d+)', (req, res) => {
             signed: true
         });
 
-        model.user.detail(+req.params.id).then(
+        model.user.detail(req.params.id).then(
             doc => {
                 delete doc.password;
                 utils.handle.sendSuccess(res, doc);
@@ -116,6 +162,7 @@ router.get('/user/logout', (req, res) => {
     });
     utils.handle.sendSuccess(res, {logout: true});
 });
+
 router.get('/user/check-login', (req, res) => {
     const user = req.signedCookies.user;
 
