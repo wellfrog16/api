@@ -355,6 +355,7 @@ model.address = {
         return utils.promise.default(err, {effect});
     },
 
+    // 设置默认地址
     async default(userId, addressId) {
         // 数值化
         userId = +userId;
@@ -378,5 +379,57 @@ model.address = {
         return model.user.update(userDoc);
     }
 };
+
+// 订单
+model.order = {
+    async insert(userId, addressId) {
+        // 数值化
+        userId = +userId;
+        addressId = +addressId;
+
+        let userDoc = null;
+
+        // 尝试获取
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 获取数据成功后
+        let err = null;
+        let addressDoc = null;
+        let orderDoc = {};
+        let cartDoc = [];
+        if (!userDoc) {
+            err = '用户信息读取错误';
+        } else {
+
+            // 遍历地址，获得指定的地址
+            for (const item of userDoc.shop.address) {
+                if (item.id === addressId) {
+                    addressDoc = item;
+                    break;
+                };
+            }
+
+            // 遍历购物，获得选中的商品
+            for (const item of userDoc.shop.cart) {
+                if (item.checked) {
+                    cartDoc.push(item);
+                };
+            }
+
+            orderDoc.id = 111;
+            orderDoc.address = addressDoc;
+            orderDoc.goodsList = cartDoc;
+            orderDoc.createAt = '';
+
+            userDoc.order.push(orderDoc);
+
+            return model.user.update(userDoc);
+        }
+    }
+}
 
 module.exports = model;
