@@ -113,6 +113,17 @@ router.put('/address/:id(\\d+)/default', (req, res, next) => {
 
 // 订单
 // ------------------------------------------
+// 请求指定订单信息
+router.get('/order/:id(\\d+)', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.order.detail(user.id, req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
 // 请求列表
 router.get('/order', (req, res, next) => {
     const user = req.signedCookies.user;

@@ -385,6 +385,35 @@ model.address = {
 
 // 订单
 model.order = {
+    async detail(userId, orderId) {
+        // 数值化
+        userId = +userId;
+
+        let userDoc = null;
+
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 获取数据成功后
+        let err = null;
+        let doc = null;
+        if (!userDoc) {
+            err = '用户信息读取错误';
+        } else {
+            for(const item of userDoc.shop.order) {
+                if (orderId === item.id) {
+                    doc = item;
+                    break;
+                }
+            }
+        }
+
+        return utils.promise.default(err, doc);
+    },
+
     async insert(userId, { addressId, discount, tax, shipping }) {
         let orderDoc = {};
         orderDoc.id = createOrderId();
@@ -437,7 +466,12 @@ model.order = {
 
         userDoc.shop.order.push(orderDoc);
 
-        return model.user.update(userDoc);
+        try {
+            await model.user.update(userDoc);
+            return utils.promise.resolve({ id: orderDoc.id });
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
     },
 
     // 订单列表
