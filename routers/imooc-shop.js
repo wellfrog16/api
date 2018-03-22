@@ -22,11 +22,11 @@ router.get('/cart', (req, res, next) => {
 });
 
 // 添加商品
-router.post('/cart/:id(\\d+)', (req, res, next) => {
+router.post('/cart', (req, res, next) => {
     const user = req.signedCookies.user;
 
     if (user) {
-        model.cart.insert(user.id, req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+        model.cart.insert(user.id, req.body.goodsId).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
         utils.handle.sendError(res, '未登陆');
     }
@@ -106,6 +106,41 @@ router.put('/address/:id(\\d+)/default', (req, res, next) => {
 
     if (user) {
         model.address.default(user.id, req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 订单
+// ------------------------------------------
+// 请求列表
+router.get('/order', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.order.list(user.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 创建订单
+router.post('/order', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.order.insert(user.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 删除指定的订单
+router.delete('/order/:id', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.order.delete(user.id, req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
         utils.handle.sendError(res, '未登陆');
     }

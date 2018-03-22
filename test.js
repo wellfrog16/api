@@ -1,3 +1,5 @@
+const moment = require('moment');
+const Chance = require('chance');
 // const xx = require('./models/sys/database');
 
 // xx.guid.getGuid('dictionary', 'config').then((v) => {
@@ -76,15 +78,24 @@
 // qq();
 
 
-function aaa() {
-    // return new Promise((resolve, reject) => {
-    //     reject(1);
-    // });
-    Promise.reject(1);
-}
+// function aaa() {
+//     // return new Promise((resolve, reject) => {
+//     //     reject(1);
+//     // });
+//     Promise.reject(1);
+// }
 
-aaa().then((res) => {
-    console.log('1:' + res);
-}).catch((res) => {
-    console.log('2:' + res);
-})
+// aaa().then((res) => {
+//     console.log('1:' + res);
+// }).catch((res) => {
+//     console.log('2:' + res);
+// })
+
+// const chance = new Chance();
+// console.log(moment(new Date()).format('YYYYMMDDhhmmssx'));
+// console.log(chance.integer({min:100, max:999}));
+
+
+const a = 100;
+
+console.log(-a);

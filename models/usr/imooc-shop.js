@@ -1,6 +1,9 @@
 const database = require('../../helper/database');
 const utils = require('../../utils/utils');
 const dbModel = require('../../models/sys/database');
+const moment = require('moment');
+const Chance = require('chance');
+const chance = new Chance();
 
 const db = database('imooc-shop', 'usr');
 
@@ -382,10 +385,16 @@ model.address = {
 
 // 订单
 model.order = {
-    async insert(userId, addressId) {
+    async insert(userId, { addressId, discount, tax, shipping }) {
+        let orderDoc = {};
+        orderDoc.id = createOrderId();
+
         // 数值化
         userId = +userId;
         addressId = +addressId;
+        orderDoc.discount = +discount;
+        orderDoc.tax = +tax;
+        orderDoc.shipping = +shipping;
 
         let userDoc = null;
 
@@ -397,39 +406,99 @@ model.order = {
         }
 
         // 获取数据成功后
-        let err = null;
         let addressDoc = null;
-        let orderDoc = {};
         let cartDoc = [];
+
+        orderDoc.totalPrice = 0;
+
+        // 遍历地址，获得指定的地址
+        for (const item of userDoc.shop.address) {
+            if (item.id === addressId) {
+                addressDoc = item;
+                break;
+            }
+        }
+
+        // 遍历购物，获得选中的商品
+        for (const item of userDoc.shop.cart) {
+            if (item.checked) {
+                cartDoc.push(item);
+                orderDoc.totalPrice += item.price * item.count;
+            }
+        }
+
+        // 订单总价格
+        orderDoc.totalOrder = orderDoc.totalPrice - orderDoc.discount + orderDoc.tax + orderDoc.shipping;
+
+        orderDoc.address = addressDoc;
+        orderDoc.goodsList = cartDoc;
+        orderDoc.status = 1;
+        orderDoc.createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
+
+        userDoc.shop.order.push(orderDoc);
+
+        return model.user.update(userDoc);
+    },
+
+    // 订单列表
+    async list(userId) {
+        // 数值化
+        userId = +userId;
+
+        let userDoc = null;
+
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 获取数据成功后
+        let err = null;
+        let doc = {};
         if (!userDoc) {
             err = '用户信息读取错误';
         } else {
-
-            // 遍历地址，获得指定的地址
-            for (const item of userDoc.shop.address) {
-                if (item.id === addressId) {
-                    addressDoc = item;
-                    break;
-                };
-            }
-
-            // 遍历购物，获得选中的商品
-            for (const item of userDoc.shop.cart) {
-                if (item.checked) {
-                    cartDoc.push(item);
-                };
-            }
-
-            orderDoc.id = 111;
-            orderDoc.address = addressDoc;
-            orderDoc.goodsList = cartDoc;
-            orderDoc.createAt = '';
-
-            userDoc.order.push(orderDoc);
-
-            return model.user.update(userDoc);
+            doc = {list: userDoc.shop.order};
         }
+
+        return utils.promise.default(err, doc);
+    },
+
+    // 删除，todo: 直接数据库删除
+    async delete(userId, orderId) {
+        // 数值化
+        userId = +userId;
+
+        let userDoc = null;
+
+        // 尝试获取
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        let err = null;
+        let effect = 0;
+
+        if (userDoc) {
+            for (const order of userDoc.shop.order) {
+                if (order.id === orderId) {
+                    userDoc.shop.order.splice(userDoc.shop.order.indexOf(order), 1);
+                    break;
+                }
+            }
+
+            effect = await model.user.update(userDoc);
+        } else {
+            err = '用户信息读取错误';
+        }
+
+        return utils.promise.default(err, {effect});
     }
-}
+};
+
+const createOrderId = () => `${moment().format('YYYYMMDDhhmmss')}${chance.integer({min: 1000, max: 9999})}`;
 
 module.exports = model;
