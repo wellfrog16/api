@@ -213,6 +213,34 @@ model.cart = {
 
         // 更新依旧返回Promise
         return model.user.update(userDoc);
+    },
+
+    async count(userId) {
+        // 数值化
+        userId = +userId;
+
+        let userDoc = null;
+
+        try {
+            userDoc = await model.user.detail(userId);
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        // 获取数据成功后
+        let err = null;
+        let doc = {};
+        let count = 0;
+        if (!userDoc) {
+            err = '用户信息读取错误';
+        } else {
+            for (const item of userDoc.shop.cart) {
+                count += item.count;
+            }
+            doc.count = count;
+        }
+
+        return utils.promise.default(err, doc);
     }
 };
 

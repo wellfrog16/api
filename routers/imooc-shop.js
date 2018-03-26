@@ -65,6 +65,17 @@ router.put('/cart/checkAll', (req, res, next) => {
     }
 });
 
+// 获得商品总数量
+router.get('/cart/count', (req, res, next) => {
+    const user = req.signedCookies.user;
+
+    if (user) {
+        model.cart.count(user.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
 // 地址
 // ------------------------------------------
 // 请求列表
