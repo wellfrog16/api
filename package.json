@@ -27,6 +27,6 @@
     "nedb": "^1.8.0"
   },
   "devDependencies": {
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.10"
   }
 }
