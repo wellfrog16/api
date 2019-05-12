@@ -9,10 +9,10 @@ const log = s => !config.debug || console.log(s);
 // 不使用http码，使用自定义的json来返回
 const handle = {
     sendSuccess(res, data) {
-        res.json({ code: 200, err: null, data });
+        res.json({ code: 200, err: null, success: true, data });
     },
     sendError(res, err) {
-        res.json({ code: 500, err, data: {} });
+        res.json({ code: 500, err, success: false, data: {} });
     }
 };
 
