@@ -2,7 +2,6 @@
     "env": {
         "browser": true
     },
-    "extends": "standard",
     "parserOptions": {
         "ecmaVersion": 8,
         "sourceType": "module",

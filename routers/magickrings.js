@@ -5,9 +5,9 @@ const router = express.Router();
 
 // 隐私条款
 router.put('/clause', (req, res, next) => {
-    const user = req.signedCookies.user;
+    const member = req.signedCookies.member;
 
-    if (user) {
+    if (member) {
         // model.cart.update(user.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
         model.clause.update(req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
@@ -15,6 +15,280 @@ router.put('/clause', (req, res, next) => {
     }
 });
 router.get('/clause', (req, res) => model.clause.detail(req.query).then(docs => utils.handle.sendSuccess(res, docs), err => utils.handle.sendError(res, err)));
+
+// 课程模块
+// -----------------------
+router.get('/course/:id(\\d+)', (req, res) => model['course'].detail(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
+
+router.post('/course', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['course'].insert(member.name, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 更新
+router.put('/course/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['course'].update(req.params.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 批量删除
+router.delete('/course', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['course'].batchRemove(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 删除
+router.delete('/course/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['course'].remove(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 请求列表
+router.get('/course', (req, res, next) => {
+    model['course'].list(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+});
+
+// 淘宝买家秀
+// -----------------------
+router.get('/taobao-info/:id(\\d+)', (req, res) => model['taobao-info'].detail(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
+
+router.post('/taobao-info', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['taobao-info'].insert(member.name, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 更新
+router.put('/taobao-info/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['taobao-info'].update(req.params.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 批量删除
+router.delete('/taobao-info', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['taobao-info'].batchRemove(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 删除
+router.delete('/taobao-info/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['taobao-info'].remove(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 请求列表
+router.get('/taobao-info', (req, res, next) => {
+    model['taobao-info'].list(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+});
+
+// 学员资质
+// -----------------------
+router.get('/student/:id(\\d+)', (req, res) => model['student'].detail(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
+
+router.post('/student', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['student'].insert(member.name, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 更新
+router.put('/student/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['student'].update(req.params.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 批量删除
+router.delete('/student', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['student'].batchRemove(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 删除
+router.delete('/student/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['student'].remove(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 请求列表
+router.get('/student', (req, res, next) => {
+    model['student'].list(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+});
+
+// 分类
+// --------------------------------
+router.get('/category/:id(\\d+)', (req, res) => model['category'].detail(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
+
+router.post('/category', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['category'].insert(member.name, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 更新
+router.put('/category/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['category'].update(req.params.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 请求列表
+router.get('/category', (req, res, next) => {
+    model['category'].list(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+});
+
+// 子分类
+// --------------------------------
+router.get('/category/:id(\\d+)/children', (req, res, next) => {
+    model['category'].listChildren(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+});
+
+router.post('/category/:id(\\d+)/children', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['category'].appendChildren(member.name, req.params.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+router.put('/category/:id(\\d+)/children', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['category'].modifyChildren(req.params.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+router.delete('/category/:id(\\d+)/children/:childrenId(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['category'].removeChildren(req.params.id, req.params.childrenId).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 产品
+// --------------------------------
+router.get('/product/:id(\\d+)', (req, res) => model['product'].detail(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
+
+router.post('/product', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['product'].insert(member.name, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 更新
+router.put('/product/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['product'].update(req.params.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 请求列表
+router.get('/product', (req, res, next) => {
+    model['product'].list(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+});
+
+// 删除
+router.delete('/product/:id(\\d+)', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['product'].remove(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+
+// 批量删除
+router.delete('/product', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        model['product'].batchRemove(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
 
 // 用户
 // -----------------------
