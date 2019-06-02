@@ -8,7 +8,7 @@
   },
   "main": "app.js",
   "scripts": {
-    "dev": "set NODE_ENV=&&node app.js",
+    "dev": "cross-env NODE_ENV=&&node app.js",
     "prod": "export NODE_ENV=production&&node app.js",
     "lint": "eslint helper/**/*.js models/**/*.js router/**/*.js utils/**/*.js *.js --fix",
     "start": "nodemon app.js --config nodeman.json"
