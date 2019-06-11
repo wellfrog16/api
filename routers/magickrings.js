@@ -2,6 +2,11 @@ const express = require('express');
 const model = require('../models/usr/magickrings');
 const utils = require('../utils/utils');
 const router = express.Router();
+const tearcherRouters = require('./magickrings/teacher');
+const productRouters = require('./magickrings/product');
+
+tearcherRouters(router);
+productRouters(router);
 
 // 隐私条款
 router.put('/clause', (req, res, next) => {
@@ -15,6 +20,19 @@ router.put('/clause', (req, res, next) => {
     }
 });
 router.get('/clause', (req, res) => model.clause.detail(req.query).then(docs => utils.handle.sendSuccess(res, docs), err => utils.handle.sendError(res, err)));
+
+// 品牌故事
+router.put('/story', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        // model.cart.update(user.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+        model.story.update(req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+router.get('/story', (req, res) => model.clause.detail(req.query).then(docs => utils.handle.sendSuccess(res, docs), err => utils.handle.sendError(res, err)));
 
 // 课程模块
 // -----------------------
@@ -233,58 +251,6 @@ router.delete('/category/:id(\\d+)/children/:childrenId(\\d+)', (req, res, next)
 
     if (member) {
         model['category'].removeChildren(req.params.id, req.params.childrenId).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
-    } else {
-        utils.handle.sendError(res, '未登陆');
-    }
-});
-
-// 产品
-// --------------------------------
-router.get('/product/:id(\\d+)', (req, res) => model['product'].detail(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err)));
-
-router.post('/product', (req, res, next) => {
-    const member = req.signedCookies.member;
-
-    if (member) {
-        model['product'].insert(member.name, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
-    } else {
-        utils.handle.sendError(res, '未登陆');
-    }
-});
-
-// 更新
-router.put('/product/:id(\\d+)', (req, res, next) => {
-    const member = req.signedCookies.member;
-
-    if (member) {
-        model['product'].update(req.params.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
-    } else {
-        utils.handle.sendError(res, '未登陆');
-    }
-});
-
-// 请求列表
-router.get('/product', (req, res, next) => {
-    model['product'].list(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
-});
-
-// 删除
-router.delete('/product/:id(\\d+)', (req, res, next) => {
-    const member = req.signedCookies.member;
-
-    if (member) {
-        model['product'].remove(req.params.id).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
-    } else {
-        utils.handle.sendError(res, '未登陆');
-    }
-});
-
-// 批量删除
-router.delete('/product', (req, res, next) => {
-    const member = req.signedCookies.member;
-
-    if (member) {
-        model['product'].batchRemove(req.query).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
     } else {
         utils.handle.sendError(res, '未登陆');
     }

@@ -24,6 +24,21 @@ model.clause = {
     }
 };
 
+// 品牌故事
+model.story = {
+    detail() {
+        return new Promise((resolve, reject) => {
+            db.story.findOne({guid: 'story'}, (err, doc) => utils.promise.test(resolve, reject, err, doc));
+        });
+    },
+    update(userDoc) {
+        delete userDoc._id;
+        return new Promise((resolve, reject) => {
+            db.story.update({guid: 'story'}, {$set: userDoc}, {returnUpdatedDocs: true, upsert: true}, (err, numAffected, doc) => utils.promise.test(resolve, reject, err, numAffected));
+        });
+    }
+};
+
 // 用户
 model.member = {
     detail(id) {
@@ -228,6 +243,89 @@ model['student'] = {
     },
 };
 
+model['teacher'] = {
+    // 单品详细
+    detail(id) {
+        // 数值化
+        id = +id;
+
+        return new Promise((resolve, reject) => {
+            db['teacher'].findOne({id}, (err, doc) => utils.promise.test(resolve, reject, err, doc));
+        });
+    },
+
+    async insert(name, data) {
+        let id = 0;
+
+        // 尝试获取
+        try {
+            id = await dbModel.guid.getGuid('teacher', 'magickrings');
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+
+        data.id = id;
+        data.createdUser = name;
+        data.createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
+
+        return new Promise((resolve, reject) => {
+            db['teacher'].insert(data, (err, doc) => utils.promise.test(resolve, reject, err, doc));
+        });
+    },
+
+    update(id, data) {
+        delete data.id;
+        return new Promise((resolve, reject) => {
+            db['teacher'].update({id: +id}, {$set: data}, {returnUpdatedDocs: true}, (err, numAffected, doc) => utils.promise.test(resolve, reject, err, numAffected));
+        });
+    },
+
+    remove(id) {
+        return new Promise((resolve, reject) => {
+            db['teacher'].remove({id: +id}, {}, (err, numAffected) => utils.promise.test(resolve, reject, err, numAffected));
+        });
+    },
+
+    batchRemove({ ids }) {
+        let effect = ids.split(',').length;
+
+        try {
+            ids.split(',').forEach(id => {
+                model['teacher'].remove(id);
+            });
+
+            return utils.promise.resolve({effect});
+        } catch (e) {
+            return utils.promise.reject(e);
+        }
+    },
+
+    // 列表，带分页
+    list(query) {
+        const { p = 1, ps = 20, q, course } = query;
+
+        const pattern = new RegExp(q, 'gi');
+
+        // 查询参数
+        let params = {
+            $or: [
+                { name: { $regex: pattern } },
+                { code: { $regex: pattern } },
+            ],
+        };
+
+        if (course && course.length > 0) {
+            params.course = { $in: course };
+        }
+
+        return new Promise((resolve, reject) => {
+            db['teacher'].find(params).sort({createdAt: -1}).skip((p - 1) * ps).limit(+ps).exec((err1, list) => {
+                db['teacher'].count(params, (err2, total) => utils.promise.test(resolve, reject, (err1 + err2), {total, list}));
+            });
+        });
+    },
+};
+
 model['category'] = {
     // 单品详细
     detail(id) {
@@ -272,7 +370,7 @@ model['category'] = {
         let params = {};
 
         return new Promise((resolve, reject) => {
-            db['category'].find(params).sort({createdAt: -1}).skip((p - 1) * ps).limit(+ps).exec((err1, list) => {
+            db['category'].find(params).sort({id: 1}).skip((p - 1) * ps).limit(+ps).exec((err1, list) => {
                 db['category'].count(params, (err2, total) => utils.promise.test(resolve, reject, (err1 + err2), {total, list}));
             });
         });
@@ -420,7 +518,7 @@ model['product'] = {
             return utils.promise.reject(e);
         }
 
-        const { p = 1, ps = 20, q, category, child } = query;
+        const { p = 1, ps = 20, q, category, child, ids } = query;
 
         const pattern = new RegExp(q, 'gi');
 
@@ -437,6 +535,11 @@ model['product'] = {
 
         if (child) {
             params.child = +child;
+        }
+
+        if (ids) {
+            const arrId = ids.split(',').map(item => +item);
+            params.id = { $in: arrId };
         }
 
         return new Promise((resolve, reject) => {
