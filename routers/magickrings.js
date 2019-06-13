@@ -32,7 +32,7 @@ router.put('/story', (req, res, next) => {
         utils.handle.sendError(res, '未登陆');
     }
 });
-router.get('/story', (req, res) => model.clause.detail(req.query).then(docs => utils.handle.sendSuccess(res, docs), err => utils.handle.sendError(res, err)));
+router.get('/story', (req, res) => model.story.detail(req.query).then(docs => utils.handle.sendSuccess(res, docs), err => utils.handle.sendError(res, err)));
 
 // 课程模块
 // -----------------------
