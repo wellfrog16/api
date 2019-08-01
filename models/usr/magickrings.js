@@ -548,7 +548,12 @@ model['product'] = {
                 // console.log(list);
                 list.forEach(item => {
                     const category = categoryList.find(t => t.id === item.category);
-                    item.categoryName = category.children.find(t => t.id === item.child).name;
+                    const child = category.children.find(t => t.id === item.child);
+                    if (child) {
+                        item.categoryName = child.name;
+                    } else {
+                        item.categoryName = '分类丢失';
+                    }
                 });
                 db['product'].count(params, (err2, total) => utils.promise.test(resolve, reject, (err1 + err2), {total, list}));
             });
