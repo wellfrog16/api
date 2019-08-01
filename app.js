@@ -14,7 +14,7 @@ app.all('*', (req, res, next) => {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     // res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Credentials', true);
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
     res.header('X-Powered-By', 'stand by me, by wellfrog.');
     // res.header('Content-Type', 'application/json;charset=utf-8');
@@ -38,7 +38,11 @@ app.use('/magickrings', require('./routers/magickrings'));
 
 // 定义错误页
 app.use((req, res) => {
-    res.status(404).json({code: 404, err: '页面无法找到'});
+    if (req.method.toLowerCase() === 'options') {
+        res.send(200)
+    } else {
+        res.status(404).json({code: 404, err: '页面无法找到'});
+    }
 });
 
 app.use((req, res) => {
