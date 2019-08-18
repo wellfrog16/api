@@ -645,16 +645,7 @@ model['course'] = {
         const pattern = new RegExp(q, 'gi');
 
         // 查询参数
-        let params = {
-            $or: [
-                { name: { $regex: pattern } },
-                { code: { $regex: pattern } },
-            ],
-        };
-
-        if (course && course.length > 0) {
-            params.course = { $in: course };
-        }
+        let params = {};
 
         return new Promise((resolve, reject) => {
             db['course'].find(params).sort({createdAt: -1}).skip((p - 1) * ps).limit(+ps).exec((err1, list) => {
