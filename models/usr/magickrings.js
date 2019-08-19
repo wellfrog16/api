@@ -370,7 +370,7 @@ model['category'] = {
         let params = {};
 
         return new Promise((resolve, reject) => {
-            db['category'].find(params).sort({id: 1}).skip((p - 1) * ps).limit(+ps).exec((err1, list) => {
+            db['category'].find(params).skip((p - 1) * ps).limit(+ps).exec((err1, list) => {
                 db['category'].count(params, (err2, total) => utils.promise.test(resolve, reject, (err1 + err2), {total, list}));
             });
         });
