@@ -21,7 +21,7 @@ var upload = multer({
     storage: storage,
     // 其他设置请参考multer的limits
     limits:{
-        fieldSize: 1024 * 1024 * 2,
+        fieldSize: 1024 * 1024 * 20,
     }
 });
 
