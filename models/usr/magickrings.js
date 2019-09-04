@@ -39,6 +39,21 @@ model.story = {
     }
 };
 
+// 通知
+model.notification = {
+    detail() {
+        return new Promise((resolve, reject) => {
+            db.notification.findOne({guid: 'notification'}, (err, doc) => utils.promise.test(resolve, reject, err, doc));
+        });
+    },
+    update(userDoc) {
+        delete userDoc._id;
+        return new Promise((resolve, reject) => {
+            db.notification.update({guid: 'notification'}, {$set: userDoc}, {returnUpdatedDocs: true, upsert: true}, (err, numAffected, doc) => utils.promise.test(resolve, reject, err, numAffected));
+        });
+    }
+};
+
 // 用户
 model.member = {
     detail(id) {

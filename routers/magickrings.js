@@ -22,6 +22,19 @@ router.put('/clause', (req, res, next) => {
 router.get('/clause', (req, res) => model.clause.detail(req.query).then(docs => utils.handle.sendSuccess(res, docs), err => utils.handle.sendError(res, err)));
 
 // 品牌故事
+router.put('/notification', (req, res, next) => {
+    const member = req.signedCookies.member;
+
+    if (member) {
+        // model.cart.update(user.id, req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+        model.notification.update(req.body).then(doc => utils.handle.sendSuccess(res, doc), err => utils.handle.sendError(res, err));
+    } else {
+        utils.handle.sendError(res, '未登陆');
+    }
+});
+router.get('/notification', (req, res) => model.notification.detail().then(docs => utils.handle.sendSuccess(res, docs), err => utils.handle.sendError(res, err)));
+
+// 品牌故事
 router.put('/story', (req, res, next) => {
     const member = req.signedCookies.member;
 
