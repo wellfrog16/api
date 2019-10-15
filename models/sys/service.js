@@ -1,3 +1,4 @@
+const axios = require('axios');
 const handleSend = require('../../helper/handleSend');
 const multer = require('../../helper/upload/image');
 
@@ -21,7 +22,18 @@ let model = {
                 handleSend(res, err, docs);
             });
         }
-    }
+    },
+    translate(req, res, next) {
+        axios.get('http://dict-co.iciba.com/api/dictionary.php', {
+            params: {
+                type: 'json',
+                key: 'E56ABC10E12BCE88717FEE502FC46EBF',
+                w: 'love',
+            }
+        }).then((res) => {
+            console.log(res.data);
+        })
+    },
 };
 
 module.exports = model;
