@@ -5,7 +5,7 @@ const multer = require('../../helper/upload/image');
 let model = {
     file: {
         upload(req, res, next) {
-            multer.single('avatar')(req, res, (err) => {
+            multer().single('avatar')(req, res, (err) => {
                 if (err) {
                     handleSend(res, err, {});
                     return;
